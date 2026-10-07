@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import logoImage from '../../assets/logo.png';
+import Logo from './Logo';
 import {
     HiOutlineHome,
     HiOutlineBookOpen,
@@ -27,11 +27,9 @@ const menuItems = {
         { label: 'Assessments', path: '/student/assessments', icon: HiOutlineClipboardCheck },
         { label: 'Performance', path: '/student/performance', icon: HiOutlineChartBar },
         { label: 'Learning Journey', path: '/student/learning-journey', icon: HiOutlineFire },
-        { label: 'Flashcards', path: '/student/flashcards', icon: HiOutlineLightBulb },
         { label: 'Rewards', path: '/student/rewards', icon: HiOutlineStar },
         { label: 'AI Assistant', path: '/student/chatbot', icon: HiOutlineChatAlt2 },
         { label: 'DSA Arena', path: '/student/dsa-arena', icon: HiOutlineCode },
-        { label: 'Mentor Feedback', path: '/student/mentor-feedback', icon: HiOutlineChatAlt2 },
     ],
     instructor: [
         { label: 'Dashboard', path: '/instructor/dashboard', icon: HiOutlineHome },
@@ -96,16 +94,9 @@ export default function Sidebar({ isOpen, onClose }) {
                     <HiOutlineX className="w-5 h-5" />
                 </button>
 
-                {/* Logo Section */}
-                <div className="flex items-center justify-center pb-6 px-5 shrink-0 -mt-6">
-    <div className="bg-white rounded-2xl p-3 shadow-lg w-full flex items-center justify-center">
-        <img
-            src={logoImage}
-            alt="Eduvance Logo"
-            className="w-full h-auto max-h-20 object-contain"
-        />
-    </div>
-</div>
+                <div className="flex items-center justify-center px-5 pb-6 shrink-0 -mt-6">
+                    <Logo size="sm" variant="light" className="justify-center" />
+                </div>
 
                 <nav className="flex flex-col gap-1 px-3 pb-4 overflow-y-auto flex-1">
                     {items.map((item) => (
@@ -116,8 +107,8 @@ export default function Sidebar({ isOpen, onClose }) {
                             onClick={onClose}
                             className={({ isActive }) =>
                                 `sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                                    ? 'bg-white/15 text-white shadow-md'
-                                    : 'text-white/60 hover:text-white hover:bg-white/8'
+                                    ? 'font-semibold underline decoration-slate-500 underline-offset-4'
+                                    : 'text-slate-600 hover:text-slate-900'
                                 }`
                             }
                         >

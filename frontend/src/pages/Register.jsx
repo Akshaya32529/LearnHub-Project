@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser } from 'react-icons/hi';
 import Logo from '../components/common/Logo';
-import { FaSun, FaMoon } from 'react-icons/fa';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -12,7 +11,6 @@ export default function Register() {
     const [loading, setLoading] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
-    const [isDarkMode, setIsDarkMode] = useState(true);
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -20,30 +18,6 @@ export default function Register() {
         confirmPassword: '',
         role: 'student',
     });
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            setIsDarkMode(false);
-            document.documentElement.classList.remove('dark');
-        } else {
-            setIsDarkMode(true);
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    }, []);
-
-    const toggleTheme = () => {
-        if (isDarkMode) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            setIsDarkMode(false);
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            setIsDarkMode(true);
-        }
-    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -118,33 +92,17 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen flex relative overflow-hidden bg-slate-50 dark:bg-[#0f172a] text-slate-900 dark:text-white transition-colors duration-500 selection:bg-indigo-500 selection:text-white">
-            
-            {/* Theme Toggle Button */}
-            <div className="absolute top-6 right-6 z-50 animate-fade-in">
-                <button 
-                    onClick={toggleTheme}
-                    className="p-3 rounded-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg text-slate-700 dark:text-yellow-300 hover:scale-110 transition-all duration-300 focus:outline-none"
-                    aria-label="Toggle Theme"
-                >
-                    {isDarkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl text-indigo-600" />}
-                </button>
-            </div>
-
-            {/* Background Glowing Orbs */}
-            <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[120px] opacity-30 dark:opacity-40 animate-pulse pointer-events-none transition-opacity duration-500"></div>
-            <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[120px] opacity-30 dark:opacity-40 animate-pulse pointer-events-none transition-opacity duration-500" style={{ animationDelay: '2s' }}></div>
-            <div className="fixed top-[40%] left-[40%] w-[20%] h-[20%] bg-cyan-400 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] opacity-20 pointer-events-none transition-opacity duration-500"></div>
+        <div className="min-h-screen flex relative overflow-hidden bg-white text-slate-900 selection:bg-teal-600 selection:text-white">
 
             {/* Left side - Branding */}
-            <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative z-10 border-r border-slate-200 dark:border-slate-800/50 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 dark:from-transparent dark:to-transparent">
-                <div className="max-w-md text-slate-800 dark:text-white relative z-10 animate-slide-up">
+            <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative z-10 border-r border-slate-200 bg-white">
+                <div className="max-w-md text-slate-800 relative z-10 animate-slide-up">
                     <div className="mb-8">
-                        <Logo size="xl" variant={isDarkMode ? 'light' : 'dark'} className="hover:scale-105 transition-transform duration-500" />
+                        <Logo size="xl" className="hover:scale-105 transition-transform duration-500" />
                     </div>
-                    <h1 className="text-5xl font-extrabold mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Join DLSES</h1>
+                    <h1 className="text-5xl font-extrabold mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Join LearnHub</h1>
                     <p className="text-xl mb-8 font-bold text-slate-700 dark:text-white/90">
-                        Start your learning journey with our Digital Learning Support and Evaluation System
+                        Start your learning journey with a modern platform designed for practical skill growth.
                     </p>
                     <div className="space-y-4">
                         {[

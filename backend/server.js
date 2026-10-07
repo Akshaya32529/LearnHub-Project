@@ -10,6 +10,7 @@ const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const { verifyCsrfToken } = require('./middleware/csrf');
+const { ensureDefaultCourses } = require('./seeds/defaultCourses');
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Initialize Express App
@@ -45,10 +46,7 @@ app.use(
             
             const isLocalhost = /^http:\/\/localhost:\d+$/.test(sanitizedOrigin);
             
-            // Check if origin is in allowed list, is localhost, or is a Vercel preview URL
-            const isAllowed = corsOrigins.includes(sanitizedOrigin) || 
-                             isLocalhost ||
-                             (process.env.NODE_ENV === 'production' && sanitizedOrigin.endsWith('.vercel.app'));
+            const isAllowed = corsOrigins.includes(sanitizedOrigin) || isLocalhost;
 
             if (isAllowed) {
                 callback(null, true);
@@ -90,7 +88,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.get('/api/health', (_req, res) => {
     res.json({
         status: 'ok',
-        message: 'DLSES API Server is running',
+        message: 'LearnHub API Server is running',
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
     });
@@ -111,10 +109,11 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
     await connectDB();
+    await ensureDefaultCourses();
     app.listen(PORT, () => {
-        console.log(`ðŸš€ Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
-        console.log(`ðŸ“¡ API: http://localhost:${PORT}/api`);
-        console.log(`ðŸ’š Health: http://localhost:${PORT}/api/health`);
+        console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+        console.log(`🌐 API: http://localhost:${PORT}/api`);
+        console.log(`💚 Health: http://localhost:${PORT}/api/health`);
     });
 };
 

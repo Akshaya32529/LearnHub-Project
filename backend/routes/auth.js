@@ -8,7 +8,11 @@ const registrationImageUpload = require('../utils/registrationImageUpload');
 // CSRF token endpoint (must be fetched before any POST/PUT/PATCH/DELETE)
 router.get('/csrf-token', generateCsrfToken);
 
-router.post('/register', registrationImageUpload.single('profileImage'), registerValidation, validate, authController.register);
+router.post('/register', registrationImageUpload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'resume', maxCount: 1 },
+    { name: 'certification', maxCount: 1 },
+]), registerValidation, validate, authController.register);
 router.post('/login', loginValidation, validate, authController.login);
 router.post('/refresh', authController.refreshToken);
 router.post('/logout', protect, authController.logout);

@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
     HiOutlineBell,
-    HiOutlineMoon,
-    HiOutlineSun,
     HiOutlineMenu,
     HiOutlineLogout,
     HiOutlineUser,
@@ -17,9 +15,6 @@ import UserAvatar from './UserAvatar';
 export default function Navbar({ onToggleSidebar }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [darkMode, setDarkMode] = useState(() => {
-        return localStorage.getItem('theme') === 'dark';
-    });
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -57,16 +52,6 @@ export default function Navbar({ onToggleSidebar }) {
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
-    useEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
     const handleLogout = async () => {
         await logout();
         navigate('/login');
@@ -82,7 +67,7 @@ export default function Navbar({ onToggleSidebar }) {
 
     return (
         <nav
-            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 lg:px-6 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm transition-colors duration-500"
+            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 lg:px-6 bg-white border-b border-slate-200 shadow-sm"
             style={{
                 height: 'var(--navbar-height)',
             }}
@@ -102,19 +87,6 @@ export default function Navbar({ onToggleSidebar }) {
 
             {/* Right */}
             <div className="flex items-center gap-2">
-                {/* Dark mode toggle */}
-                <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-full bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-sm text-slate-700 dark:text-yellow-300 hover:scale-110 transition-all duration-300 focus:outline-none"
-                    aria-label="Toggle dark mode"
-                >
-                    {darkMode ? (
-                        <HiOutlineSun className="w-5 h-5 text-yellow-400" />
-                    ) : (
-                        <HiOutlineMoon className="w-5 h-5 text-indigo-600" />
-                    )}
-                </button>
-
                 {/* Notifications */}
                 <div className="relative">
                     <button

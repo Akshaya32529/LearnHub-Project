@@ -24,7 +24,7 @@ exports.register = async (req, res, next) => {
     let tempImagePath;
     let uploadedImage;
     try {
-        const { fullName, email, password, role, phone } = req.body;
+        const { fullName, email, password, role, phone, qualification, experience, certification } = req.body;
         const normalizedName = fullName.trim().replace(/\s+/g, ' ');
         const [firstName, ...lastNameParts] = normalizedName.split(' ');
         const lastName = lastNameParts.join(' ');
@@ -57,6 +57,17 @@ exports.register = async (req, res, next) => {
         let user;
         let retries = 0;
         const maxRetries = 3;
+        const instructorProfile = role === 'instructor' ? {
+            organization: 'LearnHub',
+            expertise: qualification || 'Programming and mentoring',
+            qualification: qualification || 'Not specified',
+            experienceYears: Number(experience) > 0 ? Number(experience) : 0,
+            bio: certification ? `Certification: ${certification}` : 'Instructor profile created through LearnHub onboarding.',
+            status: 'approved',
+            submittedAt: new Date(),
+            reviewedAt: new Date(),
+            adminMessage: '',
+        } : undefined;
 
         while (retries < maxRetries) {
             try {
@@ -76,6 +87,9 @@ exports.register = async (req, res, next) => {
                     generatedStudentId = `STU${(maxId + 1).toString().padStart(3, '0')}`;
                 }
 
+                const resumeFile = req.files?.resume?.[0];
+                const certificationFile = req.files?.certification?.[0];
+
                 user = await User.create({
                     firstName,
                     lastName,
@@ -85,6 +99,21 @@ exports.register = async (req, res, next) => {
                     phone,
                     studentId: generatedStudentId,
                     avatar,
+                    instructorVerification: instructorProfile ? {
+                        ...instructorProfile,
+                        resumeDocument: resumeFile ? {
+                            storageId: resumeFile.filename || resumeFile.originalname,
+                            originalName: resumeFile.originalname,
+                            mimeType: resumeFile.mimetype,
+                            size: resumeFile.size,
+                        } : undefined,
+                        proofDocument: certificationFile ? {
+                            storageId: certificationFile.filename || certificationFile.originalname,
+                            originalName: certificationFile.originalname,
+                            mimeType: certificationFile.mimetype,
+                            size: certificationFile.size,
+                        } : undefined,
+                    } : undefined,
                 });
                 break; // Successfully created user, exit loop
             } catch (error) {
@@ -192,7 +221,7 @@ exports.login = async (req, res, next) => {
                     student: user._id,
                     type: 'badge',
                     badge: 'first_login',
-                    title: 'Welcome! ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ¢â‚¬Â¹',
+                    title: 'Welcome! 🎉',
                     description: 'Logged in for the first time',
                     points: 10,
                     earnedAt: new Date(),

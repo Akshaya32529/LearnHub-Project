@@ -9,6 +9,12 @@ const courseSchema = new mongoose.Schema(
             minlength: 3,
             maxlength: 120,
         },
+        slug: {
+            type: String,
+            unique: true,
+            sparse: true,
+            trim: true,
+        },
         code: {
             type: String,
             required: [true, 'Course code is required'],
@@ -63,6 +69,19 @@ const courseSchema = new mongoose.Schema(
 
 courseSchema.index({ instructor: 1 });
 courseSchema.index({ status: 1, submittedAt: 1 });
+
+courseSchema.pre('save', function (next) {
+    if (!this.slug && this.name) {
+        const base = this.name
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || 'course';
+        this.slug = `${base}-${Date.now().toString(36)}`;
+    }
+    next();
+});
+
 courseSchema.virtual('topicCount').get(function () {
     if (this.modules?.length) return this.modules.reduce((total, module) => total + (module.lessons?.length || 0), 0);
     return this.topics?.length || this.chapters?.length || 0;

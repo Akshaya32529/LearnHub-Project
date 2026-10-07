@@ -64,7 +64,7 @@ export default function CourseDetail() {
             setAssessments(uniqueAssessments);
 
             // Expand first topic by default
-            const firstTopic = Object.keys(lecturesRes.data.data.lectures)[0];
+            const firstTopic = courseData?.course?.topics?.[0]?.title || Object.keys(lecturesRes.data.data.lectures)[0];
             if (firstTopic) {
                 setExpandedTopics({ [firstTopic]: true });
             }
@@ -115,7 +115,13 @@ export default function CourseDetail() {
         );
     }
 
-    const topics = Object.keys(lectures).sort((a, b) => a.localeCompare(b));
+    const configuredTopics = course.course?.topics?.map((topic) => topic.title) || [];
+    const topics = [
+        ...configuredTopics.filter((topic) => lectures[topic]),
+        ...Object.keys(lectures).filter((topic) => !configuredTopics.includes(topic)).sort((a, b) => a.localeCompare(b)),
+    ];
+    const assignments = assessments.filter((assessment) => assessment.assessmentType === 'assignment');
+    const quizzes = assessments.filter((assessment) => assessment.assessmentType !== 'assignment');
     const allLectures = Object.values(lectures).flat();
     const videoLectures = allLectures.filter(l => l.type === 'video');
     const pdfLectures = allLectures.filter(l => l.type === 'pdf' || l.type === 'document');
@@ -174,7 +180,13 @@ export default function CourseDetail() {
                         active={activeTab === 'quizzes'}
                         onClick={() => handleTabChange('quizzes')}
                         label="Quizzes"
-                        count={assessments.length}
+                        count={quizzes.length}
+                    />
+                    <TabButton
+                        active={activeTab === 'assignments'}
+                        onClick={() => handleTabChange('assignments')}
+                        label="Assignments"
+                        count={assignments.length}
                     />
                     <TabButton
                         active={activeTab === 'pdfs'}
@@ -209,11 +221,11 @@ export default function CourseDetail() {
 
                 {activeTab === 'quizzes' && (
                     <div className="space-y-4">
-                        {assessments.length === 0 ? (
+                        {quizzes.length === 0 ? (
                             <EmptyState message="No quizzes available yet" icon={HiOutlineClipboardList} />
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {assessments.map((a) => (
+                                {quizzes.map((a) => (
                                     <div
                                         key={a._id}
                                         className="rounded-xl p-5"
@@ -262,6 +274,41 @@ export default function CourseDetail() {
                                             {a.attempts >= 3 ? 'Attempts Exhausted' : a.attempts > 0 ? 'Retake Quiz' : 'Start Quiz'}
                                         </button>
                                     </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === 'assignments' && (
+                    <div className="space-y-4">
+                        {assignments.length === 0 ? (
+                            <EmptyState message="No assignments available yet" icon={HiOutlineClipboardList} />
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {assignments.map((assignment) => (
+                                    <article key={assignment._id} className="rounded-xl border border-orange-200 bg-white p-5 shadow-sm">
+                                        <div className="mb-3 flex items-start justify-between gap-3">
+                                            <div>
+                                                <p className="mb-1 text-xs font-semibold uppercase text-orange-700">{assignment.topic}</p>
+                                                <h3 className="font-semibold text-slate-900">{assignment.title}</h3>
+                                            </div>
+                                            <span className="rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">Assignment</span>
+                                        </div>
+                                        <p className="mb-4 text-sm text-slate-600">{assignment.description || assignment.instructions}</p>
+                                        <div className="mb-4 flex gap-4 text-xs text-slate-500">
+                                            <span>{assignment.totalMarks} marks</span>
+                                            <span>{assignment.duration} mins</span>
+                                            <span>{assignment.attempts || 0} / {assignment.maxAttempts || 3} attempts</span>
+                                        </div>
+                                        <button
+                                            disabled={assignment.attempts >= (assignment.maxAttempts || 3)}
+                                            onClick={() => navigate(`/student/assessments?start=${assignment._id}&fromCourse=${courseId}`)}
+                                            className="w-full rounded-lg bg-orange-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                                        >
+                                            {assignment.attempts >= (assignment.maxAttempts || 3) ? 'Attempts Exhausted' : 'Start Assignment'}
+                                        </button>
+                                    </article>
                                 ))}
                             </div>
                         )}

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 import Logo from '../components/common/Logo';
-import { FaSun, FaMoon } from 'react-icons/fa';
 
 export default function Login() {
     const { login } = useAuth();
@@ -11,32 +10,6 @@ export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(true);
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            setIsDarkMode(false);
-            document.documentElement.classList.remove('dark');
-        } else {
-            setIsDarkMode(true);
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    }, []);
-
-    const toggleTheme = () => {
-        if (isDarkMode) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            setIsDarkMode(false);
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            setIsDarkMode(true);
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -45,14 +18,11 @@ export default function Login() {
             const user = await login(formData.email, formData.password);
             toast.success(`Welcome back, ${user.firstName}!`);
             const destination = user.role === 'instructor'
-                ? user.instructorVerification?.status === 'approved'
-                    ? '/instructor/dashboard'
-                    : '/instructor/verification'
+                ? '/instructor/dashboard'
                 : user.role === 'reviewer' ? '/reviewer/dashboard'
                     : user.role === 'mentor' ? '/mentor/dashboard'
                         : user.role === 'admin' ? '/admin/dashboard'
-                            : user.role === 'instructor' ? '/instructor'
-                                : '/student';
+                            : '/student';
             navigate(destination);
         } catch (err) {
             const msg = err.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -64,23 +34,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen flex relative overflow-hidden bg-slate-50 dark:bg-[#0f172a] text-slate-900 dark:text-white transition-colors duration-500 selection:bg-indigo-500 selection:text-white">
-            
-            {/* Theme Toggle Button */}
-            <div className="absolute top-6 right-6 z-50 animate-fade-in">
-                <button 
-                    onClick={toggleTheme}
-                    className="p-3 rounded-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg text-slate-700 dark:text-yellow-300 hover:scale-110 transition-all duration-300 focus:outline-none"
-                    aria-label="Toggle Theme"
-                >
-                    {isDarkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl text-indigo-600" />}
-                </button>
-            </div>
-
-            {/* Background Glowing Orbs */}
-            <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[120px] opacity-30 dark:opacity-40 animate-pulse pointer-events-none transition-opacity duration-500"></div>
-            <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[120px] opacity-30 dark:opacity-40 animate-pulse pointer-events-none transition-opacity duration-500" style={{ animationDelay: '2s' }}></div>
-            <div className="fixed top-[40%] left-[40%] w-[20%] h-[20%] bg-cyan-400 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] opacity-20 pointer-events-none transition-opacity duration-500"></div>
+        <div className="min-h-screen flex relative overflow-hidden bg-white text-slate-900 selection:bg-teal-600 selection:text-white">
 
             {/* Centered Premium Form */}
             <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10">
@@ -91,7 +45,7 @@ export default function Login() {
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-white/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none"></div>
 
                         <div className="lg:hidden text-center mb-10">
-                            <Logo size="lg" className="justify-center" variant={isDarkMode ? 'light' : 'dark'} />
+                            <Logo size="lg" className="justify-center" />
                         </div>
 
                         <div className="text-center mb-8 relative z-10">

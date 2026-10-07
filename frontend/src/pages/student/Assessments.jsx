@@ -118,7 +118,8 @@ export default function StudentAssessments() {
             // Redirect back to course detail page if coming from a course
             const fromCourse = searchParams.get('fromCourse');
             if (fromCourse) {
-                navigate(`/student/courses/${fromCourse}?tab=quizzes`);
+                const courseTab = activeTest.assessmentType === 'assignment' ? 'assignments' : 'quizzes';
+                navigate(`/student/courses/${fromCourse}?tab=${courseTab}`);
             }
         } catch (err) {
             toast.error(err.response?.data?.message || 'Submission failed');

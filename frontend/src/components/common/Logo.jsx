@@ -1,4 +1,4 @@
-import React from 'react';
+import { HiOutlineAcademicCap } from 'react-icons/hi';
 
 /**
  * Logo Component for Digital Learning Support and Evaluation System
@@ -29,21 +29,16 @@ const Logo = ({ className = '', showText = true, size = 'md', variant = 'dark' }
     const iconClasses = sizes[size] || sizes.md;
     const textSizeClass = textSizes[size] || textSizes.md;
 
-    const textColor = variant === 'light' ? 'text-white' : 'text-slate-900 dark:text-white';
-    const brandGradient = 'from-blue-500 via-indigo-500 to-purple-500';
+    const textColor = variant === 'light' ? 'text-white' : 'text-slate-900';
 
     return (
         <div className={`flex items-center gap-3 ${className}`}>
-            <img
-                src={import.meta.env.BASE_URL ? `${import.meta.env.BASE_URL}logo.png` : '/logo.png'}
-                alt="Logo"
-                className={`object-contain ${iconClasses}`}
-            />
+            <span className={`flex items-center justify-center rounded-xl bg-teal-50 text-teal-700 ${iconClasses}`} aria-hidden="true">
+                <HiOutlineAcademicCap className="h-3/4 w-3/4" />
+            </span>
             {showText && (
                 <span className={`font-bold tracking-tight ${textSizeClass} ${textColor}`}>
-                    <span className="bg-gradient-to-r from-blue-400 via-sky-500 to-green-400 bg-clip-text text-transparent">
-                        Eduvance
-                    </span>
+                    <span className={variant === 'light' ? 'text-white' : 'text-teal-700'}>LearnHub</span>
                 </span>
             )}
         </div>

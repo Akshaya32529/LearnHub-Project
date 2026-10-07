@@ -17,7 +17,7 @@ router.put('/verification', verificationController.requireEditable, proofUpload.
 router.post('/verification/submit', verificationController.submit);
 router.get('/verification/documents/:kind', verificationController.document);
 
-router.use(requireApprovedInstructor);
+// Instructors are allowed to start creating courses immediately; onboarding is simplified to a direct account setup.
 
 // Profile routes
 router.get('/profile', profileController.getProfile);

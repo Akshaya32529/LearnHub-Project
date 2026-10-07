@@ -26,6 +26,9 @@ const registerValidation = [
     body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
     body('role').isIn(['student', 'instructor']).withMessage('Invalid registration role.'),
+    body('qualification').optional().trim().isLength({ min: 2, max: 200 }).withMessage('Qualification must be between 2 and 200 characters'),
+    body('experience').optional().trim().isLength({ min: 1, max: 100 }).withMessage('Experience must be provided in a short, valid format'),
+    body('certification').optional().trim().isLength({ max: 200 }).withMessage('Certification must not exceed 200 characters'),
 ];
 
 const loginValidation = [

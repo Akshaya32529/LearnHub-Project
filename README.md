@@ -14,40 +14,39 @@ DLSES is a comprehensive educational platform designed to connect students, inst
 
 - **Frontend**: React, Vite, Tailwind CSS
 - **Backend**: Node.js, Express.js
-- **Database**: MongoDB (Atlas)
+- **Database**: MongoDB
 - **Authentication**: JWT, Bcrypt
-- **Deployment**: Vercel (Frontend), Render (Backend)
+- **Local frontend**: http://localhost:5173
+- **Local backend API**: http://localhost:5000/api
 
 ## 📦 Getting Started
 
 ### Prerequisites
 
 - Node.js (v18+)
-- MongoDB Atlas account
+- MongoDB running locally at `mongodb://localhost:27017`
 - Docker & Docker Compose (optional)
 
-### Installation
+### Run locally
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/eduvance.git
-   cd eduvance
-   ```
-
-2. **Backend Setup**:
-   ```bash
+1. **Configure and start the backend**:
+   ```powershell
    cd backend
-   npm install
-   # Create a .env file based on .env.example
-   npm run dev
+   npm.cmd install
+   Copy-Item .env.example .env
    ```
+   Set `JWT_SECRET` and `JWT_REFRESH_SECRET` in `backend/.env` to private
+   development-only values, then start the server with `npm.cmd run dev`.
+   The backend API and health check are available at
+   `http://localhost:5000/api` and `http://localhost:5000/api/health`.
 
-3. **Frontend Setup**:
-   ```bash
-   cd ../frontend
-   npm install
-   npm run dev
+2. **Start the frontend in a second terminal**:
+   ```powershell
+   cd frontend
+   npm.cmd install
+   npm.cmd run dev
    ```
+   Open `http://localhost:5173`. The Vite development server proxies API and upload requests to the local backend.
 
 ### Running with Docker
 

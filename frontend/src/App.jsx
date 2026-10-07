@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
@@ -16,12 +17,10 @@ import StudentCourseDetail from './pages/student/CourseDetail';
 import StudentAssessments from './pages/student/Assessments';
 import StudentPerformance from './pages/student/Performance';
 import StudentLearningJourney from './pages/student/LearningJourney';
-import StudentFlashcards from './pages/student/Flashcards';
 import StudentRewards from './pages/student/Rewards';
 import StudentChatbot from './pages/student/Chatbot';
 import StudentNotifications from './pages/student/Notifications';
 import StudentDSAArena from './pages/student/DSAArena';
-import StudentMentorFeedback from './pages/student/MentorFeedback';
 
 import InstructorDashboard from './pages/instructor/Dashboard';
 import InstructorVerification from './pages/instructor/InstructorVerification';
@@ -56,6 +55,11 @@ import MentorFeedback from './pages/mentor/Feedback';
 import MentorSessions from './pages/mentor/Sessions';
 
 export default function App() {
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }, []);
+
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -92,12 +96,10 @@ export default function App() {
             <Route path="/student/assessments" element={<StudentAssessments />} />
             <Route path="/student/performance" element={<StudentPerformance />} />
             <Route path="/student/learning-journey" element={<StudentLearningJourney />} />
-            <Route path="/student/flashcards" element={<StudentFlashcards />} />
             <Route path="/student/rewards" element={<StudentRewards />} />
             <Route path="/student/chatbot" element={<StudentChatbot />} />
             <Route path="/student/notifications" element={<StudentNotifications />} />
             <Route path="/student/dsa-arena" element={<StudentDSAArena />} />
-            <Route path="/student/mentor-feedback" element={<StudentMentorFeedback />} />
             <Route path="/student/profile" element={<Profile />} />
           </Route>
 
