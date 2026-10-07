@@ -6,7 +6,7 @@ const controller = require('../controllers/instructorController');
 test('application saves profile and document removals through existing fields', async () => {
   const original = User.findById;
   let saves = 0;
-  const user = { _id: 'test', instructorVerification: { status: 'incomplete', emailVerified: true, resumeDocument: { storageId: 'old-resume' }, proofDocument: { storageId: 'old-proof' } }, async save() { saves++; } };
+  const user = { _id: 'test', instructorVerification: { status: 'incomplete', resumeDocument: { storageId: 'old-resume' }, proofDocument: { storageId: 'old-proof' } }, async save() { saves++; } };
   User.findById = () => Object.assign(Promise.resolve(user), { select: async () => user });
   let body;
   try {

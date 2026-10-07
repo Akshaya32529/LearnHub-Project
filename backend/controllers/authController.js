@@ -2,7 +2,6 @@ const User = require('../models/User');
 const Reward = require('../models/Reward');
 const Notification = require('../models/Notification');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../config/jwt');
-const { sendInstructorVerificationCode } = require('../services/instructorEmailVerification');
 const { uploadToCloudinary } = require('../utils/cloudinary');
 const fs = require('fs');
 const os = require('os');
@@ -104,19 +103,6 @@ exports.register = async (req, res, next) => {
             }
         }
 
-        let verificationEmailSent = true;
-        if (user.role === 'instructor') {
-            try {
-                await sendInstructorVerificationCode(user, { enforceCooldown: false });
-            } catch (error) {
-                verificationEmailSent = false;
-                console.error('Registration verification email unavailable', {
-                    EMAIL_PROVIDER: 'resend', EMAIL_TYPE: 'verification', RECIPIENT: '<redacted>',
-                    ERROR: error.code === 'EMAIL_DELIVERY_FAILED' ? 'provider delivery failed; see preceding Email delivery failed log for the sanitized provider reason' : error.message,
-                });
-            }
-        }
-
         // Generate tokens
         const payload = { id: user._id, role: user.role };
         const accessToken = generateAccessToken(payload);
@@ -131,7 +117,7 @@ exports.register = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: verificationEmailSent ? 'Registration successful' : 'Your account was created, but we could not send the verification email. Sign in and request a new code.',
+            message: 'Registration successful',
             data: {
                 user: {
                     id: user._id,
@@ -143,7 +129,6 @@ exports.register = async (req, res, next) => {
                     avatar: user.avatar,
                 },
                 accessToken,
-                verificationEmailSent: user.role === 'instructor' ? verificationEmailSent : null,
             },
         });
     } catch (error) {
@@ -227,7 +212,7 @@ exports.login = async (req, res, next) => {
                     role: user.role,
                     fullName: user.fullName,
                     avatar: user.avatar,
-                    instructorVerification: user.role === 'instructor' ? { status: user.instructorVerification?.status, emailVerified: user.instructorVerification?.emailVerified } : undefined,
+                    instructorVerification: user.role === 'instructor' ? { status: user.instructorVerification?.status } : undefined,
                 },
                 accessToken,
             },

@@ -31,7 +31,7 @@ test('period reset and cooldown boundaries use server dates, independent of proc
 
 test('existing review and submit handlers count only rejects, lock, reset, preserve audit, and ignore forged controls', async () => {
     const saved = { findById: User.findById, findOne: User.findOne, findOneAndUpdate: User.findOneAndUpdate, find: User.find, create: Notification.create };
-    const user = { _id: { equals: () => false }, fullName: 'Test Instructor', instructorVerification: { status: 'pending', emailVerified: true, organization: 'Institute', expertise: 'Web', qualification: 'M.Tech', experienceYears: 0, bio: 'Practical teaching background.', resumeDocument: { storageId: 'cv.pdf' }, proofDocument: { storageId: 'proof.pdf' }, rejectionCount: 0, rejectionHistory: [], submissionHistory: [] }, async save() {} };
+    const user = { _id: { equals: () => false }, fullName: 'Test Instructor', instructorVerification: { status: 'pending', organization: 'Institute', expertise: 'Web', qualification: 'M.Tech', experienceYears: 0, bio: 'Practical teaching background.', resumeDocument: { storageId: 'cv.pdf' }, proofDocument: { storageId: 'proof.pdf' }, rejectionCount: 0, rejectionHistory: [], submissionHistory: [] }, async save() {} };
     const v = user.instructorVerification;
     let forceConflict = false;
     User.findOne = async () => user;

@@ -10,7 +10,7 @@ export default function ApprovedInstructorRoute({ children }) {
         const checkApproval = async () => {
             try {
                 const response = await instructorAPI.getVerification();
-                if (active) setState({ loading: false, approved: response.data.data.user?.instructorVerification?.status === 'approved' && response.data.data.user?.instructorVerification?.emailVerified === true });
+                if (active) setState({ loading: false, approved: response.data.data.user?.instructorVerification?.status === 'approved' });
             } catch {
                 if (active) setState({ loading: false, approved: false });
             }

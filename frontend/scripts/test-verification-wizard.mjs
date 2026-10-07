@@ -1,16 +1,15 @@
 ﻿import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { emptyProfile, profileErrors, initialStep, fileError } from '../src/pages/teacher/verificationHelpers.mjs';
+import { emptyProfile, profileErrors, initialStep, fileError } from '../src/pages/instructor/verificationHelpers.mjs';
 const profile = { organization: 'Institute', expertise: 'Web Development', qualification: 'M.Tech', experienceYears: 0, professionalUrl: '', bio: 'I teach practical web development courses.' };
 test('restores the first incomplete step from persisted data', () => {
   assert.equal(initialStep({}), 1);
-  assert.equal(initialStep({ ...profile, emailVerified: false }), 1);
-  assert.equal(initialStep({ emailVerified: true }), 2);
-  assert.equal(initialStep({ ...profile, emailVerified: true }), 3);
-  assert.equal(initialStep({ ...profile, emailVerified: true, status: 'changes_requested' }), 3);
-  assert.equal(initialStep({ emailVerified: true, status: 'changes_requested' }), 2);
-  assert.equal(initialStep({ status: 'pending' }), 4);
-  assert.equal(initialStep({ status: 'approved' }), 4);
+  assert.equal(initialStep(profile), 2);
+  assert.equal(initialStep({}), 1);
+  assert.equal(initialStep({ ...profile, status: 'changes_requested' }), 2);
+  assert.equal(initialStep({ status: 'changes_requested' }), 1);
+  assert.equal(initialStep({ status: 'pending' }), 3);
+  assert.equal(initialStep({ status: 'approved' }), 3);
 });
 test('professional validation accepts zero experience and optional URLs', () => {
   assert.deepEqual(profileErrors(profile), {});

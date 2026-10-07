@@ -15,7 +15,7 @@ exports.review = async (req, res, next) => {
         const v = instructor.instructorVerification;
         if (instructor._id.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You cannot review your own application' });
         if (v.status !== 'pending') return res.status(409).json({ success: false, message: 'Only pending applications can be reviewed.' });
-        if (status === 'approved' && (!v.emailVerified || !v.organization || !v.expertise || !v.qualification || v.experienceYears == null || !v.bio || !v.resumeDocument?.storageId || !v.proofDocument?.storageId)) return res.status(400).json({ success: false, message: 'Email verification, professional details, resume and proof are required.' });
+        if (status === 'approved' && (!v.organization || !v.expertise || !v.qualification || v.experienceYears == null || !v.bio || !v.resumeDocument?.storageId || !v.proofDocument?.storageId)) return res.status(400).json({ success: false, message: 'Professional details, resume and proof are required.' });
         const now = new Date();
         const state = reapplicationState(v, now);
         if (status === 'rejected' && state.rejectionCount >= 2 && req.body.confirmFinalRejection !== true) {

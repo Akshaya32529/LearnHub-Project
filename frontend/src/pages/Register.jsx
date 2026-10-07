@@ -102,18 +102,14 @@ export default function Register() {
             });
             if (profileImage) registerData.append('profileImage', profileImage);
             const response = await registerUser(registerData);
-            if (formData.role === 'instructor' && response?.verificationEmailSent === false) {
-                toast.error('Your account was created, but the verification email could not be sent. Sign in and resend the code.');
-            } else {
-                toast.success(formData.role === 'instructor' ? 'Verification code sent to your email.' : 'Registration successful! Redirecting...');
-            }
+            toast.success('Registration successful! Redirecting...');
             setTimeout(() => {
-                navigate(formData.role === 'instructor' ? '/instructor/verification/email' : '/student');
+                navigate(formData.role === 'instructor' ? '/instructor/verification' : '/student');
             }, 1000);
         } catch (error) {
             const status = error.response?.status;
             const message = status === 409
-                ? 'An account with this email already exists. Sign in to continue; if it is an unverified instructor account, you can resend its verification code after signing in.'
+                ? 'An account with this email already exists. Sign in to continue.'
                 : error.response?.data?.message || 'We could not complete registration. Please check your details and try again.';
             toast.error(message);
         } finally {

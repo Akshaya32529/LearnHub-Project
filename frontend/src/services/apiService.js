@@ -44,8 +44,6 @@ export const studentAPI = {
 export const instructorAPI = {
     getDocument: (kind) => api.get(`/instructor/verification/documents/${kind}`, { responseType: 'blob' }),
     getVerification: () => api.get('/instructor/verification'),
-    sendCode: () => api.post('/instructor/verification/send-code'),
-    verifyCode: (code) => api.post('/instructor/verification/verify-code', { code }),
     updateApplication: (data, config = {}) => api.put('/instructor/verification', data, { ...config, headers: { 'Content-Type': 'multipart/form-data' } }),
     submitApplication: () => api.post('/instructor/verification/submit'),
     getDashboard: () => api.get('/instructor/dashboard'),

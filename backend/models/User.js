@@ -57,11 +57,6 @@ const userSchema = new mongoose.Schema(
         department: String,
         specialization: String,
         instructorVerification: {
-            emailVerified: { type: Boolean, default: false },
-            emailVerificationCodeHash: { type: String, select: false },
-            emailVerificationExpires: { type: Date, select: false },
-            emailVerificationLastSentAt: { type: Date },
-            emailVerificationFailedAttempts: { type: Number, default: 0, min: 0 },
             organization: { type: String, trim: true, maxlength: 150 },
             expertise: { type: String, trim: true, maxlength: 200 },
             qualification: { type: String, trim: true, maxlength: 200 },

@@ -35,7 +35,7 @@ async function session(address) {
         const adminEmail = email('admin');
         const adminResult = await createAdmin({ ADMIN_NAME: 'Role Flow Admin', ADMIN_EMAIL: adminEmail, ADMIN_PASSWORD: password });
         ids.users.push(adminResult.user._id);
-        const instructor = await User.create({ firstName: 'Flow Instructor', email: email('instructor'), password, role: 'instructor', instructorVerification: { emailVerified: true, status: 'approved' } });
+        const instructor = await User.create({ firstName: 'Flow Instructor', email: email('instructor'), password, role: 'instructor', instructorVerification: { status: 'approved' } });
         const student = await User.create({ firstName: 'Assigned Student', email: email('student'), password, role: 'student' });
         const otherStudent = await User.create({ firstName: 'Private Student', email: email('other'), password, role: 'student' });
         ids.users.push(instructor._id, student._id, otherStudent._id);

@@ -15,9 +15,8 @@ export function profileErrors(form) {
   return errors;
 }
 export function initialStep(v = {}) {
-  if (v.status === 'pending' || v.status === 'approved') return 4;
-  if (!v.emailVerified) return 1;
-  return Object.keys(profileErrors(v)).length ? 2 : 3;
+  if (v.status === 'pending' || v.status === 'approved') return 3;
+  return Object.keys(profileErrors(v)).length ? 1 : 2;
 }
 export function fileError(file, kind) {
   const extensions = kind === 'resume' ? ['pdf', 'doc', 'docx'] : ['pdf', 'jpg', 'jpeg', 'png'];

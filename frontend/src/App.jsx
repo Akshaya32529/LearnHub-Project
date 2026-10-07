@@ -103,7 +103,6 @@ export default function App() {
 
           {/* Instructor verification and approved teaching routes */}
           <Route path="/instructor" element={<ProtectedRoute roles={['instructor']}><VerificationLayout><InstructorVerification /></VerificationLayout></ProtectedRoute>} />
-          <Route path="/instructor/verification/email" element={<ProtectedRoute roles={['instructor']}><VerificationLayout><InstructorVerification /></VerificationLayout></ProtectedRoute>} />
           <Route path="/instructor/verification" element={<ProtectedRoute roles={['instructor']}><VerificationLayout><InstructorVerification /></VerificationLayout></ProtectedRoute>} />
           <Route element={<ProtectedRoute roles={['instructor']}><ApprovedInstructorRoute><DashboardLayout /></ApprovedInstructorRoute></ProtectedRoute>}>
             <Route path="/instructor/dashboard" element={<InstructorDashboard />} />

@@ -50,7 +50,7 @@ async function session(address) {
         await fs.mkdir(folder, { recursive: true });
         const filename = `regression-${crypto.randomUUID()}.pdf`; const filepath = path.join(folder, filename); files.push(filepath);
         await fs.writeFile(filepath, '%PDF-1.4\n% Test private document\n');
-        await User.updateOne({ _id: instructor._id }, { $set: { instructorVerification: { emailVerified: true, status: 'pending', organization: 'Test College', expertise: 'Testing', qualification: 'M.Tech', experienceYears: 0, bio: 'Regression test', submittedAt: new Date(), resumeDocument: { storageId: filename, originalName: 'resume.pdf' }, proofDocument: { storageId: filename, originalName: 'proof.pdf' } } } });
+        await User.updateOne({ _id: instructor._id }, { $set: { instructorVerification: { status: 'pending', organization: 'Test College', expertise: 'Testing', qualification: 'M.Tech', experienceYears: 0, bio: 'Regression test', submittedAt: new Date(), resumeDocument: { storageId: filename, originalName: 'resume.pdf' }, proofDocument: { storageId: filename, originalName: 'proof.pdf' } } } });
         for (const kind of ['resume', 'proof']) {
             const doc = await admin.document(`/admin/instructors/${instructor._id}/documents/${kind}`);
             assert.equal(doc.status, 200); assert.ok(doc.text.startsWith('%PDF'));

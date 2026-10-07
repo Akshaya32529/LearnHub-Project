@@ -13,8 +13,6 @@ const { createAssessmentValidation, validate } = require('../middleware/validati
 router.use(protect, authorize('instructor'));
 
 router.get('/verification', verificationController.status);
-router.post('/verification/send-code', verificationController.sendCode);
-router.post('/verification/verify-code', verificationController.verifyCode);
 router.put('/verification', verificationController.requireEditable, proofUpload.fields([{ name: 'resume', maxCount: 1 }, { name: 'proof', maxCount: 1 }]), verificationController.updateApplication);
 router.post('/verification/submit', verificationController.submit);
 router.get('/verification/documents/:kind', verificationController.document);

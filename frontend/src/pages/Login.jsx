@@ -45,9 +45,9 @@ export default function Login() {
             const user = await login(formData.email, formData.password);
             toast.success(`Welcome back, ${user.firstName}!`);
             const destination = user.role === 'instructor'
-                ? user.instructorVerification?.status === 'approved' && user.instructorVerification?.emailVerified
+                ? user.instructorVerification?.status === 'approved'
                     ? '/instructor/dashboard'
-                    : '/instructor/verification/email'
+                    : '/instructor/verification'
                 : user.role === 'reviewer' ? '/reviewer/dashboard'
                     : user.role === 'mentor' ? '/mentor/dashboard'
                         : user.role === 'admin' ? '/admin/dashboard'

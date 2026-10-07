@@ -1,30 +1,12 @@
 const { reapplicationState, denyCooldown } = require('../services/instructorReapplication');
-const crypto = require('crypto');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { streamInstructorDocument } = require('../utils/instructorDocumentStream');
-const { MAX_FAILED_ATTEMPTS, hashOtp, sendInstructorVerificationCode } = require('../services/instructorEmailVerification');
-
-const verificationSelect = '+instructorVerification.emailVerificationCodeHash +instructorVerification.emailVerificationExpires';
 const safeUser = async (id) => User.findById(id).select('firstName lastName email role instructorVerification');
-
-const verificationMetadata = (user) => {
-    const verification = user.instructorVerification || {};
-    const expiresAt = verification.emailVerificationExpires || null;
-    const resendAvailableAt = verification.emailVerificationLastSentAt
-        ? new Date(verification.emailVerificationLastSentAt.getTime() + 60000)
-        : null;
-    return {
-        expiresAt,
-        resendAvailableAt,
-        hasActiveCode: Boolean(verification.emailVerificationCodeHash && expiresAt && expiresAt > new Date()),
-        codeExpired: Boolean(verification.emailVerificationCodeHash && expiresAt && expiresAt <= new Date()),
-    };
-};
 
 exports.status = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user._id).select(verificationSelect);
+        const user = await User.findById(req.user._id);
         if (!user) return res.status(404).json({ success: false, message: 'Instructor account not found' });
         const publicUser = {
             _id: user._id,
@@ -34,56 +16,7 @@ exports.status = async (req, res, next) => {
             role: user.role,
             instructorVerification: { ...user.toObject().instructorVerification },
         };
-        delete publicUser.instructorVerification.emailVerificationCodeHash;
-        delete publicUser.instructorVerification.emailVerificationExpires;
-        res.json({ success: true, data: { user: publicUser, emailVerification: verificationMetadata(user), reapplication: reapplicationState(user.instructorVerification) } });
-    } catch (error) { next(error); }
-};
-
-exports.sendCode = async (req, res, next) => {
-    try {
-        const result = await sendInstructorVerificationCode(req.user._id);
-        res.json({ success: true, message: 'A new verification code has been sent.', data: result });
-    } catch (error) {
-        if (error.retryAfter) res.set('Retry-After', String(error.retryAfter));
-        next(error);
-    }
-};
-
-exports.verifyCode = async (req, res, next) => {
-    try {
-        const code = String(req.body.code || '').trim();
-        if (!/^\d{6}$/.test(code)) return res.status(400).json({ success: false, message: 'Invalid verification code.' });
-        const user = await User.findById(req.user._id).select(verificationSelect);
-        const verification = user.instructorVerification;
-        if (verification.emailVerified) return res.json({ success: true, message: 'Email is already verified.' });
-        if (!verification.emailVerificationCodeHash) {
-            return res.status(400).json({ success: false, message: 'Please request a new verification code.' });
-        }
-        if (!verification.emailVerificationExpires || verification.emailVerificationExpires <= new Date()) {
-            return res.status(400).json({ success: false, code: 'OTP_EXPIRED', message: 'This verification code has expired. Please request a new code.' });
-        }
-        const submittedHash = hashOtp(user._id, code);
-        const storedHash = verification.emailVerificationCodeHash;
-        const matches = storedHash.length === submittedHash.length && crypto.timingSafeEqual(Buffer.from(storedHash), Buffer.from(submittedHash));
-        if (!matches) {
-            verification.emailVerificationFailedAttempts = (verification.emailVerificationFailedAttempts || 0) + 1;
-            if (verification.emailVerificationFailedAttempts >= MAX_FAILED_ATTEMPTS) {
-                verification.emailVerificationCodeHash = undefined;
-                verification.emailVerificationExpires = undefined;
-                await user.save({ validateBeforeSave: false });
-                return res.status(429).json({ success: false, code: 'OTP_ATTEMPTS_EXCEEDED', message: 'Too many incorrect attempts. Please request a new verification code.' });
-            }
-            await user.save({ validateBeforeSave: false });
-            return res.status(400).json({ success: false, message: 'Invalid verification code.' });
-        }
-        verification.emailVerified = true;
-        verification.emailVerificationLastSentAt = undefined;
-        verification.emailVerificationCodeHash = undefined;
-        verification.emailVerificationExpires = undefined;
-        verification.emailVerificationFailedAttempts = 0;
-        await user.save({ validateBeforeSave: false });
-        res.json({ success: true, message: 'Email verified successfully.' });
+        res.json({ success: true, data: { user: publicUser, reapplication: reapplicationState(user.instructorVerification) } });
     } catch (error) { next(error); }
 };
 
@@ -126,7 +59,6 @@ exports.submit = async (req, res, next) => {
         const now = new Date();
         const eligibility = reapplicationState(verification, now);
         if (eligibility.locked) return denyCooldown(res, eligibility);
-        if (!verification.emailVerified) return res.status(400).json({ success: false, message: 'Verify your email before submitting' });
         if (!verification.organization || !verification.expertise || !verification.qualification || verification.experienceYears === undefined || !verification.bio) return res.status(400).json({ success: false, message: 'Complete all required professional information' });
         if (!verification.resumeDocument?.storageId) return res.status(400).json({ success: false, message: 'Please upload your Resume/CV.' });
         if (!verification.proofDocument?.storageId) return res.status(400).json({ success: false, message: 'Please upload Instructor Verification Proof.' });
