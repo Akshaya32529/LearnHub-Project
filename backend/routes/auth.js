@@ -2,11 +2,7 @@ const router = require('express').Router();
 const authController = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { registerValidation, loginValidation, validate } = require('../middleware/validation');
-const { generateCsrfToken } = require('../middleware/csrf');
 const registrationImageUpload = require('../utils/registrationImageUpload');
-
-// CSRF token endpoint (must be fetched before any POST/PUT/PATCH/DELETE)
-router.get('/csrf-token', generateCsrfToken);
 
 router.post('/register', registrationImageUpload.fields([
     { name: 'profileImage', maxCount: 1 },
